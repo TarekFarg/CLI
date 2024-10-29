@@ -1,8 +1,6 @@
 package org.example;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
 public class CMDInterpreter {
@@ -25,42 +23,50 @@ public class CMDInterpreter {
     }
 
     public void executeCommand(String input) {
-        String[] args = input.split("\\s+");
-        String command = args[0];
+        if (input.contains(" | ")) {
+            handlePipe(input);
+        } else if (input.contains(" > ")) {
+            handleRedirection(input, false);
+        } else if (input.contains(" >> ")) {
+            handleRedirection(input, true);
+        } else {
+            String[] args = input.split("\\s+");
+            String command = args[0];
 
-        switch (command) {
-            case "exit":
-                exit();
-                break;
-            case "help":
-                help();
-                break;
-            case "pwd":
-                pwd();
-                break;
-            case "ls":
-                ls(args);
-                break;
-            case "cd":
-                cd(args);
-                break;
-            case "mkdir":
-                mkdir(args);
-                break;
-            case "rmdir":
-                rmdir(args);
-                break;
-            case "rm":
-                rm(args);
-                break;
-            case "touch":
-                touch(args);
-                break;
-            case "cat":
-                cat(args);
-                break;
-            default:
-                System.out.println("Command not recognized. Type 'help' for available commands.");
+            switch (command) {
+                case "exit":
+                    exit();
+                    break;
+                case "help":
+                    help();
+                    break;
+                case "pwd":
+                    pwd();
+                    break;
+                case "ls":
+                    ls(args);
+                    break;
+                case "cd":
+                    cd(args);
+                    break;
+                case "mkdir":
+                    mkdir(args);
+                    break;
+                case "rmdir":
+                    rmdir(args);
+                    break;
+                case "rm":
+                    rm(args);
+                    break;
+                case "touch":
+                    touch(args);
+                    break;
+                case "cat":
+                    cat(args);
+                    break;
+                default:
+                    System.out.println("Command not recognized. Type 'help' for available commands.");
+            }
         }
     }
 
@@ -81,6 +87,9 @@ public class CMDInterpreter {
         System.out.println("rm [file] - Deletes a file");
         System.out.println("touch [file] - Creates a new empty file");
         System.out.println("cat [file] - Displays file content");
+        System.out.println("[command] > [file] - Redirects command output to file, overwriting existing content");
+        System.out.println("[command] >> [file] - Redirects command output to file, appending to existing content");
+        System.out.println("[command1] | [command2] - Pipes output from command1 to command2");
     }
 
     private void pwd() {
@@ -199,6 +208,44 @@ public class CMDInterpreter {
             }
         } else {
             System.out.println("File not found: " + args[1]);
+        }
+    }
+
+    private void handleRedirection(String input, boolean append) {
+        String[] parts = input.split(append ? " >> " : " > ");
+        String command = parts[0];
+        String filename = parts[1];
+
+        File file = new File(filename);
+        try (FileWriter writer = new FileWriter(file, append)) {
+            System.setOut(new PrintStream(new FileOutputStream(file, append)));
+            executeCommand(command.trim());
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+        } catch (IOException e) {
+            System.out.println("Error with file redirection: " + e.getMessage());
+        }
+    }
+
+    private void handlePipe(String input) {
+        String[] parts = input.split(" \\| ");
+        String command1 = parts[0].trim();
+        String command2 = parts[1].trim();
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+
+        try (PrintStream tempOut = new PrintStream(buffer)) {
+            System.setOut(tempOut);
+            executeCommand(command1);
+            System.setOut(originalOut);
+            String result = buffer.toString();
+
+            // Pass the result to the second command as input
+            System.out.println("Output from first command: \n" + result);
+            System.setIn(new ByteArrayInputStream(result.getBytes()));
+            executeCommand(command2);
+        } catch (Exception e) {
+            System.out.println("Error with piping: " + e.getMessage());
         }
     }
 
