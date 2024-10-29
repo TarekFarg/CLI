@@ -20,6 +20,8 @@ public class Main {
         System.out.println("rm [file]  - Remove a file");
         System.out.println("cat [file] - Display file content");
         System.out.println("> [file]   - Redirect output to a file");
+        System.out.println(">> [file]  - Append output to a file");
+        System.out.println("| [cmd]    - Pipe output to another command");
         System.out.println("exit       - Exit the CLI");
         System.out.println("help       - Display this help message");
     }
