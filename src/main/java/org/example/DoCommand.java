@@ -1,6 +1,9 @@
 package org.example;
 
 import java.io.*;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
@@ -9,12 +12,32 @@ public class DoCommand {
     String[] arr;
     private String currentDirectory = System.getProperty("user.dir");
 
+    // constructors
     DoCommand(String command, String[] arr) {
         this.command = command;
         this.arr = arr;
     }
+    DoCommand()
+    {
+        currentDirectory = System.getProperty("user.home");
+    }
 
-    public void display() {
+    // getters & setters
+    public String getCurrentDirectory()
+    {
+        return currentDirectory;
+    }
+    public void setCommand(String command)
+    {
+        this.command = command ;
+    }
+    public void setArr(String[] arr)
+    {
+        this.arr = arr ;
+    }
+    public void display()
+    {
+        // this function will be removed
         System.out.println(command);
     }
 
@@ -68,7 +91,28 @@ public class DoCommand {
     }
 
     private void createFile() {
-        // this function will be updated
+        if(arr.length==0)
+        {
+            System.out.println("touch <fileName>");
+            return;
+        }
+        for(String fileName:arr)
+        {
+            Path tempPath = Paths.get(currentDirectory,fileName) ;
+            try{
+                if(Files.exists(tempPath))
+                {
+                    System.out.println("File already exists");
+                }
+                else
+                {
+                    Files.createFile(tempPath);
+                    System.out.println("Created new file: " + tempPath.toAbsolutePath());
+                }
+            }catch (IOException e){
+                System.out.println("Failed to create file: "+e.getMessage());
+            }
+        }
     }
 
     private void pipeCommand() {
@@ -96,11 +140,51 @@ public class DoCommand {
     }
 
     private void removeDirectory() {
-        // this function will be updated
+        if(arr.length==0)
+        {
+            System.out.println("rmdir <dirName>");
+            return;
+        }
+        for (String dirName : arr) {
+            Path tempPath = Paths.get(currentDirectory, dirName);
+            try {
+                Files.delete(tempPath);
+                System.out.println("Directory deleted: " + tempPath.toAbsolutePath());
+            } catch (DirectoryNotEmptyException e) {
+                System.err.println("Failed to delete directory. Directory is not empty: " + tempPath.toAbsolutePath());
+            } catch (IOException e) {
+                System.err.println("Failed to delete directory: " + e.getMessage());
+            }
+        }
     }
 
     private void makeDirectory() {
-        // this function will be updated
+        if(arr.length == 0) {
+            System.out.println("mkdir <directoryName>");
+            return;
+        }
+
+        String dirName;
+        Path tempPath;
+        if(arr.length>1) { // mkdir <path> <directoryName>
+            dirName = arr[1] ;
+            tempPath = Paths.get(arr[0],dirName) ;
+        }
+        else{ // mkdir <directoryName>
+            dirName = arr[0] ;
+            tempPath = Paths.get(currentDirectory,dirName) ;
+        }
+
+        try {
+            if(Files.exists(tempPath))
+                System.out.println("Directory already exists");
+            else {
+                Files.createDirectory(tempPath);
+                System.out.println("Directory created: " + tempPath.toAbsolutePath());
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to create directory: " + e.getMessage());
+        }
     }
 
     private void listDirectory(String a) {

@@ -2,6 +2,7 @@ package org.example;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.util.Arrays;
 import java.util.Scanner;
 
 
@@ -36,9 +37,12 @@ public class Main {
 
         while (open)
         {
+            DoCommand doCommand = new DoCommand();
+            // printing current path
+            System.out.print(doCommand.getCurrentDirectory());
             System.out.print("> ");
+            
             String input = scanner.nextLine().trim();
-
             if(input.equals("exit"))
             {
                 open = false ;
@@ -51,7 +55,8 @@ public class Main {
             else
             {
                 String[] arr = input.split(" ") ;
-                DoCommand doCommand = new DoCommand(arr[0], java.util.Arrays.copyOfRange(arr, 1, arr.length)) ;
+                doCommand.setCommand(arr[0]);
+                doCommand.setArr(Arrays.copyOfRange(arr, 1, arr.length));
                 doCommand._do();
             }
         }
