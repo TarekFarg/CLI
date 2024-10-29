@@ -5,12 +5,26 @@ package org.example;
 import java.util.Scanner;
 
 
+
 public class Main {
     static void DisplayHelp()
     {
-        // this function will be updated
-        System.out.println("Help") ;
+        System.out.println("Available commands:");
+        System.out.println("pwd        - Print working directory");
+        System.out.println("cd [path]  - Change directory");
+        System.out.println("ls         - List directory contents");
+        System.out.println("mkdir [dir]- Create directory");
+        System.out.println("rmdir [dir]- Remove directory");
+        System.out.println("touch [file]- Create an empty file");
+        System.out.println("mv [src] [dest] - Move or rename a file or directory");
+        System.out.println("rm [file]  - Remove a file");
+        System.out.println("cat [file] - Display file content");
+        System.out.println("> [file]   - Redirect output to a file");
+        System.out.println("exit       - Exit the CLI");
+        System.out.println("help       - Display this help message");
     }
+
+
 
     public static void main(String[] args)
     {
@@ -20,6 +34,7 @@ public class Main {
 
         while (open)
         {
+            System.out.print("> ");
             String input = scanner.nextLine().trim();
 
             if(input.equals("exit"))
