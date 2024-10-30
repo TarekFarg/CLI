@@ -50,7 +50,7 @@ public class DoCommand {
                 changeDirectory(arr[0]);
                 break;
             case "ls":
-                if(arr.length >0) {
+                if(arr.length > 0) {
                     listDirectory(arr[0]);
                 }
                 else {

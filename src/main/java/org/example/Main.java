@@ -27,17 +27,15 @@ public class Main {
         System.out.println("help       - Display this help message");
     }
 
-
-
     public static void main(String[] args)
     {
         System.out.println("Welcome to the CLI! Type 'exit' to quit.");
         boolean open = true ;
         Scanner scanner = new Scanner(System.in) ;
+        DoCommand doCommand = new DoCommand();
 
         while (open)
         {
-            DoCommand doCommand = new DoCommand();
             // printing current path
             System.out.print(doCommand.getCurrentDirectory());
             System.out.print("> ");
