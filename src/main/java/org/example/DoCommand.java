@@ -10,14 +10,15 @@ import java.nio.file.Paths;
 public class DoCommand {
     String command;
     String[] arr;
-    private String currentDirectory = System.getProperty("user.dir");
+    private String currentDirectory ;
 
     // constructors
-    DoCommand(String command, String[] arr) {
+    public DoCommand(String command, String[] arr) {
         this.command = command;
         this.arr = arr;
+        currentDirectory = System.getProperty("user.home");
     }
-    DoCommand()
+    public DoCommand()
     {
         currentDirectory = System.getProperty("user.home");
     }
