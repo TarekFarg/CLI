@@ -228,8 +228,7 @@ public class DoCommand {
 
             if (dir.isDirectory()) {
                 currentDirectory = dir.getAbsolutePath();
-                System.setProperty("user.dir", currentDirectory); // Update system property for consistent output
-                System.out.println("user.dir: " + currentDirectory);
+//                System.setProperty("user.dir", currentDirectory);
                 System.out.println("Changed directory to: " + currentDirectory);
             } else {
                 System.out.println("Directory not found: " + path);
