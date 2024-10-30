@@ -14,7 +14,7 @@ public class DoCommandTest {
 
     // Test createFile (touch)
     @Test
-    void createFileTestWhenFileDoseNotExist() throws IOException {
+    void createFileTestWhenFileDoseNotExist(){
         DoCommand doCommand = new DoCommand();
         Path checkPath = Paths.get(doCommand.getCurrentDirectory(),"TestWhenFileDoseNotExist.txt");
 
