@@ -8,6 +8,7 @@ public class Main {
     static void DisplayHelp()
     {
         System.out.println("Available commands:");
+        System.out.println("echo [statement]       - Print statement");
         System.out.println("pwd        - Print working directory");
         System.out.println("cd [path]  - Change directory");
         System.out.println("ls         - List directory contents");

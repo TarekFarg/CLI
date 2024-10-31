@@ -65,6 +65,9 @@ public class DoCommand {
 
     public void _do() {
         switch (command) {
+            case "echo":
+                echo();
+                break;
             case "pwd":
                 printWorkingDirectory();
                 break;
@@ -120,6 +123,16 @@ public class DoCommand {
         }
     }
 
+    private void echo(){
+        if(arr.length < 1){
+            System.out.println("Usage: echo statement");
+            return;
+        }
+        this.output = arr[0];
+        if(this.printOutput){
+            System.out.println(arr[0]);
+        }
+    }
     private void createFile() {
         if(arr.length==0)
         {
