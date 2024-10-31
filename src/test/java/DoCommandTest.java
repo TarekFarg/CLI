@@ -280,4 +280,32 @@ public class DoCommandTest {
         Files.deleteIfExists(outputFile);
     }
 
+    @Test
+    @DisplayName("Test creating a file and piping ls output to grep")
+    void testTouchAndGrep() throws IOException {
+        // Step 1: Create a file named test.txt
+        DoCommand touchCommand = new DoCommand("touch", new String[]{"test.txt"});
+        touchCommand._do();
+
+        // Step 2: Execute ls command and pipe it to grep to search for test.txt
+        DoCommand lsCommand = new DoCommand("ls", new String[]{});
+
+        // Capture the output of the ls command
+        java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
+        System.setOut(new java.io.PrintStream(outContent));
+
+        // Execute ls command
+        lsCommand._do();
+
+        // Step 3: Store the output and check for test.txt
+        String lsOutput = outContent.toString();
+
+        // Step 4: Check if the output contains "test.txt"
+        assertTrue(lsOutput.contains("test.txt"), "Output should contain 'test.txt'.");
+
+        // Clean up: remove the created file after the test
+        Files.deleteIfExists(Paths.get(doCommand.getCurrentDirectory(), "test.txt"));
+    }
+    
+
 }
