@@ -177,4 +177,61 @@ public class DoCommandTest {
             }
         }
     }
+
+
+    @Test
+    public void testMoveFile() throws IOException {
+      // Create a temporary directory for the test
+      Path testDirectory = Files.createTempDirectory("testDir");
+      // Create a temporary source file within the temp directory
+      Path sourceFilePath = Files.createTempFile(testDirectory, "sourceFile", ".txt");
+      // Define the destination path within the same temp directory
+      Path destDirectory = testDirectory.resolve("destDir");
+      Files.createDirectory(destDirectory);
+      Path destFilePath = destDirectory.resolve(sourceFilePath.getFileName());
+
+      // Execute the move command
+      DoCommand moveCommand = new DoCommand("mv", new String[]{sourceFilePath.toString(), destDirectory.toString()});
+      moveCommand._do();
+
+      // Assertion to check if the source file has been moved to the destination
+      assertFalse(Files.exists(sourceFilePath), "Source file should not exist after move.");
+      assertTrue(Files.exists(destFilePath), "Destination file should exist after move.");
+    }
+
+
+    @Test
+    public void testRemoveFile() throws IOException {
+        // Create a temporary file for the test
+        Path filePath = Files.createTempFile(testDirectory, "fileToRemove", ".txt");
+
+        // Execute the remove command
+        DoCommand removeCommand = new DoCommand("rm", new String[]{filePath.toString()});
+        removeCommand._do();
+
+        // Assertion to check if the file has been removed
+        assertFalse(Files.exists(filePath), "File should be deleted");
+    }
+
+    @Test
+    public void testReadFile() throws IOException {
+        // Create a temporary file and write content to it
+        Path filePath = Files.createTempFile(testDirectory, "fileToRead", ".txt");
+        String content = "Test content for reading file";
+        Files.writeString(filePath, content);
+
+        // Capture System output to verify `cat` command output
+        java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
+        System.setOut(new java.io.PrintStream(outContent));
+
+        // Execute the read (cat) command
+        DoCommand readCommand = new DoCommand("cat", new String[]{filePath.toString()});
+        readCommand._do();
+
+        // Assertions to check if the content matches
+        assertEquals(content + System.lineSeparator(), outContent.toString(), "Content read from file should match the content written");
+
+        // Reset System output
+        System.setOut(System.out);
+    }
 }
