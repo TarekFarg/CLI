@@ -91,13 +91,25 @@ public class DoCommand {
                 createFile();
                 break;
             case "mv":
-                moveFile();
+            	if (arr.length < 2) {
+                    System.err.println("mv requires source and destination paths.");
+                } else {
+                    moveFile(arr[0], arr[1]);
+                }
                 break;
             case "rm":
-                removeFile();
+            	if (arr.length < 1) {
+                    System.err.println("rm requires a file or directory path.");
+                } else {
+                    removeFile(arr[0]);
+                }
                 break;
             case "cat":
-                concatenateFile();
+            	if (arr.length < 1) {
+                    System.err.println("cat requires a file path.");
+                } else {
+                	concatenateFile(arr[0]);
+                }
                 break;
             case ">":
                 handleRedirection(false);
@@ -184,16 +196,49 @@ public class DoCommand {
         }
     }
 
-    private void concatenateFile() {
-        // this function will be updated
+    private void concatenateFile(String path) {
+        Path filePath = Paths.get(path);
+
+        try {
+            List<String> lines = Files.readAllLines(filePath);
+            for (String line : lines) {
+                System.out.println(line);
+            }
+        } catch (NoSuchFileException e) {
+            System.err.println("File not found: " + path);
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
     }
 
-    private void removeFile() {
-        // this function will be updated
+    private void removeFile(String path) {
+        Path filePath = Paths.get(path);
+
+        try {
+            Files.delete(filePath);
+            System.out.println("File deleted successfully: " + path);
+        } catch (NoSuchFileException e) {
+            System.err.println("File not found: " + path);
+        } catch (DirectoryNotEmptyException e) {
+            System.err.println("Directory is not empty: " + path);
+        } catch (IOException e) {
+            System.err.println("Error deleting file: " + e.getMessage());
+        }
     }
 
-    private void moveFile() {
-        // this function will be updated
+    private void moveFile(String sourcePath, String destinationPath) {
+        Path source = Paths.get(sourcePath);
+        Path destination = Paths.get(destinationPath);
+        Path destinationFile = destination.resolve(source.getFileName());
+
+        try {
+        	Files.move(source, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("File moved successfully from " + sourcePath + " to " + destinationFile);
+        } catch (NoSuchFileException e) {
+            System.err.println("Source file not found: " + source);
+        } catch (IOException e) {
+            System.err.println("Error moving file: " + e.getMessage());
+        }
     }
 
     private void removeDirectory() {
