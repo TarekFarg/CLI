@@ -111,9 +111,6 @@ public class DoCommand {
             case ">>":
                 handleRedirection(true);
                 break;
-            case "|":
-                pipeCommand();
-                break;
             case "grep":
                 grep();
                 break;
@@ -148,9 +145,6 @@ public class DoCommand {
         }
     }
 
-    private void pipeCommand() {
-        // this function will be updated
-    }
 
     private void grep() {
         String searchTerm = "";
