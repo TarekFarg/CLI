@@ -5,6 +5,7 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 
 public class DoCommand {
@@ -12,10 +13,18 @@ public class DoCommand {
     String[] arr;
     private String currentDirectory ;
 
+    String output;
+    String input;
+
+    boolean printOutput;
+
     // constructors
     public DoCommand(String command, String[] arr) {
         this.command = command;
         this.arr = arr;
+        this.output = "";
+        this.input = "";
+        this.printOutput = true;
         currentDirectory = System.getProperty("user.home");
     }
     public DoCommand()
@@ -31,11 +40,25 @@ public class DoCommand {
     public void setCommand(String command)
     {
         this.command = command ;
+        this.printOutput = true;
     }
     public void setArr(String[] arr)
     {
         this.arr = arr ;
     }
+
+    public String getOutput() {
+        return output;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
+    }
+
+    public void setPrintOutput(boolean bool){
+        this.printOutput = bool;
+    }
+
     public void display()
     {
         // this function will be removed
@@ -77,13 +100,16 @@ public class DoCommand {
                 concatenateFile();
                 break;
             case ">":
-                redirectOutput();
+                handleRedirection(false);
                 break;
             case ">>":
-                appendOutput();
+                handleRedirection(true);
                 break;
             case "|":
                 pipeCommand();
+                break;
+            case "grep":
+                grep();
                 break;
             default:
                 System.out.println("This command not found.");
@@ -120,12 +146,42 @@ public class DoCommand {
         // this function will be updated
     }
 
-    private void appendOutput() {
-        // this function will be updated
+    private void grep() {
+        String searchTerm = "";
+        if (arr.length > 0)
+            searchTerm = arr[0];
+         else
+            System.out.println("Usage: grep <pattern>");
+
+        String[] lines = this.output.split("\n");
+        boolean found = false;
+
+
+
+        for (String line : lines) {
+            if (line.contains(searchTerm)) {
+                System.out.println(line);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No matches found for: " + searchTerm);
+        }
     }
 
-    private void redirectOutput() {
-        // this function will be updated
+    private void handleRedirection(boolean append) {
+        String output = this.output;
+        String fileName = this.arr[0].trim();
+
+        File file = new File(currentDirectory, fileName); // Use current directory
+
+        try (FileWriter writer = new FileWriter(file, append)) {
+            writer.write(output);
+            System.out.println("Output " + (append ? "appended" : "written") + " to file: " + fileName);
+        } catch (IOException e) {
+            System.out.println("Error with file redirection: " + e.getMessage());
+        }
     }
 
     private void concatenateFile() {
@@ -204,8 +260,12 @@ public class DoCommand {
         }
 
         if (files != null) {
+            this.output = "";
             for (String file : files) {
-                System.out.println(file);
+                this.output += file + "\n";
+                if(this.printOutput){
+                    System.out.println(file);
+                }
             }
         } else {
             System.out.println("Failed to list directory contents.");
@@ -240,6 +300,7 @@ public class DoCommand {
 
 
     private void printWorkingDirectory() {
+        this.output = currentDirectory;
         System.out.println(currentDirectory);
     }
 }

@@ -17,11 +17,66 @@ public class Main {
         System.out.println("mv [src] [dest] - Move or rename a file or directory");
         System.out.println("rm [file]  - Remove a file");
         System.out.println("cat [file] - Display file content");
-        System.out.println("> [file]   - Redirect output to a file");
-        System.out.println(">> [file]  - Append output to a file");
-        System.out.println("| [cmd]    - Pipe output to another command");
+        System.out.println("[command has output] > [file]   - Redirect output to a file");
+        System.out.println("[command has output] >> [file]  - Append output to a file");
+        System.out.println("[command has output] | [command has input]    - Pipe output to another command");
         System.out.println("exit       - Exit the CLI");
         System.out.println("help       - Display this help message");
+    }
+
+    static void handleInput(String input, DoCommand doCommand){
+            if (input.contains(" > ")) {
+                    String[] arr = input.split(" > ");
+
+                    String fileName = arr[1].trim();
+                    String[] fullCommand = arr[0].trim().split(" ");
+
+                    doCommand.setCommand(fullCommand[0]);
+                    doCommand.setArr(Arrays.copyOfRange(fullCommand, 1, fullCommand.length));
+                    doCommand.setPrintOutput(false);
+                    doCommand._do();
+
+                    doCommand.setCommand(">");
+                    doCommand.setArr(new String[]{fileName});
+                    doCommand._do();
+            }
+            else if (input.contains(" >> ")) {
+                String[] arr = input.split(" >> ");
+
+                String fileName = arr[1].trim();
+                String[] fullCommand = arr[0].trim().split(" ");
+
+                doCommand.setCommand(fullCommand[0]);
+                doCommand.setArr(Arrays.copyOfRange(fullCommand, 1, fullCommand.length));
+                doCommand.setPrintOutput(false);
+                doCommand._do();
+
+                doCommand.setCommand(">>");
+                doCommand.setArr(new String[]{fileName});
+                doCommand._do();
+            }
+                else if(input.contains(" | ")){
+                    String[] arr = input.split("\\|") ;
+
+                    String[] fullCommandOne = arr[0].trim().split(" ");
+                    String[] fullCommandTwo = arr[1].trim().split(" ");
+
+                    doCommand.setCommand(fullCommandOne[0]);
+                    doCommand.setArr(Arrays.copyOfRange(fullCommandOne, 1, fullCommandOne.length));
+                    doCommand.setPrintOutput(false);
+                    doCommand._do();
+
+
+                    doCommand.setCommand(fullCommandTwo[0]);
+                    doCommand.setArr(Arrays.copyOfRange(fullCommandTwo, 1, fullCommandTwo.length));
+                    doCommand._do();
+                }
+                else{
+                    String[] arr = input.split(" ") ;
+                    doCommand.setCommand(arr[0]);
+                    doCommand.setArr(Arrays.copyOfRange(arr, 1, arr.length));
+                    doCommand._do();
+                }
     }
 
     public static void main(String[] args)
@@ -49,10 +104,7 @@ public class Main {
             }
             else
             {
-                String[] arr = input.split(" ") ;
-                doCommand.setCommand(arr[0]);
-                doCommand.setArr(Arrays.copyOfRange(arr, 1, arr.length));
-                doCommand._do();
+                handleInput(input, doCommand);
             }
         }
         scanner.close();
