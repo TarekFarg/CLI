@@ -20,7 +20,6 @@ public class DoCommandTest {
     void setUp() throws IOException {
         doCommand = new DoCommand();
         testDirectory = Files.createTempDirectory("testDir");
-        doCommand = new DoCommand("ls", new String[]{});
         doCommand.setCommand("pwd");
         doCommand._do();
     }
@@ -234,4 +233,51 @@ public class DoCommandTest {
         // Reset System output
         System.setOut(System.out);
     }
+
+
+    @Test
+    @DisplayName("Test Output Redirection with >")
+    void testOutputRedirection() throws IOException {
+        Path outputFile = testDirectory.resolve("output.txt");
+
+        // Content to append
+        String content = " This is appended content.";
+
+
+        DoCommand doCommand = new DoCommand(">", new String[]{"output.txt"});
+        doCommand.currentDirectory = testDirectory.toString();
+        doCommand.output = content;
+        doCommand._do();
+
+        assertTrue(Files.exists(outputFile), "Output file should exist.");
+        assertEquals(content, Files.readString(outputFile), "Content of output file should match appended output.");
+
+        // Clean up
+        Files.deleteIfExists(outputFile);
+    }
+    @Test
+    @DisplayName("Test Output Redirection with >>")
+    void testOutputAppendRedirection() throws IOException {
+        Path outputFile = testDirectory.resolve("appendOutput.txt");
+
+        // Create the file and write initial content
+        String initialContent = "Initial content.";
+        Files.writeString(outputFile, initialContent);
+
+        // Content to append
+        String appendContent = " This is appended content.";
+
+
+        DoCommand doCommand = new DoCommand(">>", new String[]{"appendOutput.txt"});
+        doCommand.currentDirectory = testDirectory.toString();
+        doCommand.output = appendContent;
+        doCommand._do();
+
+        assertTrue(Files.exists(outputFile), "Output file should exist.");
+        assertEquals(initialContent + appendContent, Files.readString(outputFile), "Content of output file should match appended output.");
+
+        // Clean up
+        Files.deleteIfExists(outputFile);
+    }
+
 }

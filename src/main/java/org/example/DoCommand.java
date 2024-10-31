@@ -9,9 +9,9 @@ import java.util.List;
 public class DoCommand {
     String command;
     String[] arr;
-    private String currentDirectory ;
+    public String currentDirectory ;
 
-    String output;
+    public String output;
     String input;
 
     boolean printOutput;
