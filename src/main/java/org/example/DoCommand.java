@@ -1,11 +1,9 @@
 package org.example;
 
 import java.io.*;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class DoCommand {
@@ -105,11 +103,7 @@ public class DoCommand {
                 }
                 break;
             case "cat":
-            	if (arr.length < 1) {
-                    System.err.println("cat requires a file path.");
-                } else {
-                	concatenateFile(arr[0]);
-                }
+                concatenateFile();
                 break;
             case ">":
                 handleRedirection(false);
@@ -196,13 +190,22 @@ public class DoCommand {
         }
     }
 
-    private void concatenateFile(String path) {
-        Path filePath = Paths.get(path);
+    private void concatenateFile() {
+        if (arr.length == 0) {
+            System.out.println("Usage: cat <fileName>");
+            return;
+        }
+
+        String path = arr[0];
+        Path filePath = Paths.get(currentDirectory, path);
 
         try {
             List<String> lines = Files.readAllLines(filePath);
+            this.output = "";
             for (String line : lines) {
-                System.out.println(line);
+                this.output += line + "\n";
+                if(this.printOutput)
+                    System.out.println(line);
             }
         } catch (NoSuchFileException e) {
             System.err.println("File not found: " + path);
@@ -308,9 +311,8 @@ public class DoCommand {
             this.output = "";
             for (String file : files) {
                 this.output += file + "\n";
-                if(this.printOutput){
+                if(this.printOutput)
                     System.out.println(file);
-                }
             }
         } else {
             System.out.println("Failed to list directory contents.");
