@@ -106,7 +106,11 @@ public class DoCommand {
                 }
                 break;
             case "cat":
-                concatenateFile();
+                if (arr.length < 1) {
+                    System.err.println("cat requires a file path.");
+                } else {
+                	concatenateFile(arr[0]);
+                }
                 break;
             case ">":
                 handleRedirection(false);
@@ -197,22 +201,13 @@ public class DoCommand {
         }
     }
 
-    private void concatenateFile() {
-        if (arr.length == 0) {
-            System.out.println("Usage: cat <fileName>");
-            return;
-        }
-
-        String path = arr[0];
-        Path filePath = Paths.get(currentDirectory, path);
+    private void concatenateFile(String path) {
+        Path filePath = Paths.get(path);
 
         try {
             List<String> lines = Files.readAllLines(filePath);
-            this.output = "";
             for (String line : lines) {
-                this.output += line + "\n";
-                if(this.printOutput)
-                    System.out.println(line);
+                System.out.println(line);
             }
         } catch (NoSuchFileException e) {
             System.err.println("File not found: " + path);
