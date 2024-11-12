@@ -201,8 +201,11 @@ public class DoCommand {
         }
     }
 
-    private void concatenateFile(String path) {
-        Path filePath = Paths.get(path);
+    private void concatenateFile(String fileName) {
+    	  Path currentDir = Paths.get(currentDirectory);  // Use currentDirectory variable
+
+        // Create the file path relative to the current working directory
+        Path filePath = currentDir.resolve(fileName);
 
         try {
             List<String> lines = Files.readAllLines(filePath);
@@ -210,7 +213,7 @@ public class DoCommand {
                 System.out.println(line);
             }
         } catch (NoSuchFileException e) {
-            System.err.println("File not found: " + path);
+            System.err.println("File not found: " + filePath);
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
