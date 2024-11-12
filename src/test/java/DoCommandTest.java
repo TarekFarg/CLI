@@ -201,15 +201,19 @@ public class DoCommandTest {
 
     @Test
     public void testRemoveFile() throws IOException {
-        // Create a temporary file for the test
-        Path filePath = Files.createTempFile(testDirectory, "fileToRemove", ".txt");
+        // Create a file inside the temporary directory for testing
+        Path testFile = testDirectory.resolve("testFile.txt");
+        Files.createFile(testFile);
+
+        // Verify the file exists before removal
+        assertTrue(Files.exists(testFile), "The test file should exist before removal.");
 
         // Execute the remove command
-        DoCommand removeCommand = new DoCommand("rm", new String[]{filePath.toString()});
-        removeCommand._do();
+        DoCommand readCommand = new DoCommand("rm", new String[]{testFile.toString()});
+        readCommand._do(); // Execute the remove command to delete the file
 
-        // Assertion to check if the file has been removed
-        assertFalse(Files.exists(filePath), "File should be deleted");
+        // Verify the file is deleted
+        assertFalse(Files.exists(testFile), "The file should be deleted after the remove command.");
     }
 
     @Test

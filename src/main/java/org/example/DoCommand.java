@@ -216,18 +216,22 @@ public class DoCommand {
         }
     }
 
-    private void removeFile(String path) {
-        Path filePath = Paths.get(path);
+    private void removeFile(String fileName) {
+        Path currentDir = Paths.get(currentDirectory);  // Use currentDirectory variable
 
+        // Create the file path relative to the current working directory
+        Path filePath = currentDir.resolve(fileName);
+
+        // Try deleting the file or directory
         try {
             Files.delete(filePath);
-            System.out.println("File deleted successfully: " + path);
+            System.out.println("File or directory deleted successfully: ");
         } catch (NoSuchFileException e) {
-            System.err.println("File not found: " + path);
+            System.err.println("File or directory not found: " + filePath);
         } catch (DirectoryNotEmptyException e) {
-            System.err.println("Directory is not empty: " + path);
+            System.err.println("Directory is not empty: " + filePath);
         } catch (IOException e) {
-            System.err.println("Error deleting file: " + e.getMessage());
+            System.err.println("Error deleting file or directory: " + e.getMessage());
         }
     }
 
